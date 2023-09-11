@@ -1,0 +1,23 @@
+//Provided function for inserting IMDb data into a Binary Search Tree.
+
+
+BSTElement<string, string> *insertIntoBST(string actor, string movie, BSTElement<string, string> *root)
+{
+    if (root == nullptr)
+    {
+        root = new BSTElement<string, string>(actor);
+        root->setLabel(movie);
+        return root;
+    }
+
+    if (actor > root->getKey())
+    {
+        root->setRight(insertIntoBST(actor, movie, root->getRight()));
+    }
+    else
+    {
+        root->setLeft(insertIntoBST(actor, movie, root->getLeft()));
+    }
+
+    return root;
+}
