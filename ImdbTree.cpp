@@ -45,8 +45,8 @@ int main(int argc, char **argv)
     /*
        Step 7: Use the insertion function from the previous step to insert
                any 100 actor/movie pairs into a Bridges BST. Refer to the
-               Bridges BST documentation:
-               https://bridgesuncc.github.io/tutorials/BinarySearchTree.html
+               Bridges IMDB documentation:
+               https://bridgesuncc.github.io/tutorials/Data_IMDB.html
     */
 
     /*
