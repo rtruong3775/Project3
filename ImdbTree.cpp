@@ -28,7 +28,7 @@ int main(int argc, char **argv)
      Step 4: Create a Bridges object by uncommenting the next line
      and inserting the values from steps 1 and 2
     */
-//    Bridges bridges(1, "YOUR_USER_ID", "YOUR_API_KEY");
+    //Bridges bridges(1, "SECRET_HOLDING_USER_ID", "SECRET_HOLDING_API_KEY");
 
     /*
        Step 5: Import IMDB data into a vector<ActorMovieIMDB> by
@@ -58,7 +58,8 @@ int main(int argc, char **argv)
        Step 9: Color each level of the tree using a level-order traversal.
                Every node in a given level should have the same color.
                Do not use the same color in two consecutive levels. A starter
-               queue has been provided.
+               queue has been provided in case you wish to use an iterative
+               implementation of BFS.
 
                Refer to the Bridges BST Styling documentation:
                https://bridgesuncc.github.io/tutorials/BinarySearchTree.html
