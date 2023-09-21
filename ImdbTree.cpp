@@ -28,7 +28,7 @@ int main(int argc, char **argv)
      Step 4: Create a Bridges object by uncommenting the next line
      and inserting the values from steps 1 and 2
     */
-    //Bridges bridges(1, "SECRET_HOLDING_USER_ID", "SECRET_HOLDING_API_KEY");
+    //Bridges bridges(1, "USER_ID", "API_KEY");
 
     /*
        Step 5: Import IMDB data into a vector<ActorMovieIMDB> by
