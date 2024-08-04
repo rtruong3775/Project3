@@ -9,5 +9,5 @@ link_directories({CMAKE_CURRENT_SOURCE_DIR}/../libraries/bridges/lib)
 include_directories({CMAKE_CURRENT_SOURCE_DIR}/../libraries/curl/include)
 link_directories({CMAKE_CURRENT_SOURCE_DIR}/../libraries/curl/lib)
 
-add_executable(ProgrammingQuiz4 ImdbTree.cpp)
+add_executable(ProgrammingQuiz4 IGNReviews.cpp)
 target_link_libraries(ProgrammingQuiz4 libcurl.lib)
