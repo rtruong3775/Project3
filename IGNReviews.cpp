@@ -25,6 +25,43 @@ BSTElement<string, string>* insertIntoBST(string title, string rating, BSTElemen
     return root;
 }
 
+void searchGamesByGenre(const unordered_map<string, vector<string>>& genre_map) {
+    string genre;
+    cout << "Enter the genre to search for: ";
+    cin.ignore(); // to ignore any leftover newline character
+    getline(cin, genre);
+
+    auto it = genre_map.find(genre);
+    if (it != genre_map.end()) {
+        cout << "Games with genre '" << genre << "':" << endl;
+        for (const auto& title : it->second) {
+            cout << title << endl;
+        }
+    } else {
+        cout << "No games found for this genre." << endl;
+    }
+}
+
+
+
+void searchGamesByPlatform(const unordered_map<string, vector<string>>& platform_map) {
+    string platform;
+    cout << "Enter the platform to search for: ";
+    cin.ignore(); // to ignore any leftover newline character
+    getline(cin, platform);
+
+    auto it = platform_map.find(platform);
+    if (it != platform_map.end()) {
+        cout << "Games for platform '" << platform << "':" << endl;
+        for (const auto& title : it->second) {
+            cout << title << endl;
+        }
+    } else {
+        cout << "No games found for this platform." << endl;
+    }
+}
+
+
 void searchGame(const vector<Game>& game_list) {
     string title;
     cout << "Enter the title of the game to search: ";
@@ -48,11 +85,40 @@ void searchGame(const vector<Game>& game_list) {
 }
 
 void displayTopGames(const vector<Game>& game_list) {
-    cout << "Top 10 Games:" << endl;
-    for (int i = 0; i < 10 && i < game_list.size(); ++i) {
-        cout << i + 1 << ". " << game_list[i].getTitle() << " - Rating: " << game_list[i].getRating() << endl;
+    // Map to store the highest rating for each unique game title
+    map<string, double> title_to_rating;
+
+    // Populate the map with the highest rating for each game title
+    for (const auto& game : game_list) {
+        const string& title = game.getTitle();
+        double rating = game.getRating();
+
+        // Update the map if the current rating is higher than the stored one
+        if (title_to_rating.find(title) == title_to_rating.end() || title_to_rating[title] < rating) {
+            title_to_rating[title] = rating;
+        }
+    }
+
+    // Define a max-heap (priority queue) for unique games
+    auto comp = [](const pair<string, double>& a, const pair<string, double>& b) { return a.second < b.second; };
+    priority_queue<pair<string, double>, vector<pair<string, double>>, decltype(comp)> max_heap(comp);
+
+    // Push all unique game titles with their ratings into the heap
+    for (const auto& entry : title_to_rating) {
+        max_heap.push(entry);
+    }
+
+    // Display the top 10 unique games
+    cout << "Top 10 Rated Games:" << endl;
+    int count = 0;
+    while (!max_heap.empty() && count < 10) {
+        const auto& top_game = max_heap.top();
+        cout << count + 1 << ". " << top_game.first << " - Rating: " << top_game.second << endl;
+        max_heap.pop();
+        ++count;
     }
 }
+
 
 void visualizeTopGames(Bridges& bridges, const vector<Game>& game_list) {
     BSTElement<string, string>* root = nullptr;
@@ -100,33 +166,53 @@ int main(int argc, char **argv) {
     DataSource ds(&bridges);
     vector<Game> game_list = ds.getGameData();
 
+    // Create unordered maps for quick lookups
+    unordered_map<string, vector<string>> genre_map;
+    unordered_map<string, vector<string>> platform_map;
+
+    for (const auto& game : game_list) {
+        for (const auto& genre : game.getGameGenre()) {
+            genre_map[genre].push_back(game.getTitle());
+        }
+        platform_map[game.getPlatformType()].push_back(game.getTitle());
+    }
+
     int choice;
     do {
         cout << "\nMenu:" << endl;
         cout << "1. Search for a game and display its information" << endl;
-        cout << "2. Display the top 10 games in ranking" << endl;
-        cout << "3. Visualize the data of the top 10 games" << endl;
-        cout << "4. Exit" << endl;
+        cout << "2. Search for games by genre" << endl;
+        cout << "3. Search for games by platform" << endl;
+        cout << "4. Display the top 10 games in ranking" << endl;
+        cout << "5. Visualize the data of the top 10 games" << endl;
+        cout << "6. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
 
         switch (choice) {
             case 1:
                 searchGame(game_list);
-                break;
+            break;
             case 2:
-                displayTopGames(game_list);
-                break;
+                searchGamesByGenre(genre_map);
+            break;
             case 3:
-                visualizeTopGames(bridges, game_list);
-                break;
+                searchGamesByPlatform(platform_map);
+            break;
             case 4:
+                displayTopGames(game_list);
+            break;
+            case 5:
+                visualizeTopGames(bridges, game_list);
+            break;
+            case 6:
                 cout << "Exiting the program." << endl;
-                break;
+            break;
             default:
                 cout << "Invalid choice. Please try again." << endl;
         }
-    } while (choice != 4);
+    } while (choice != 6);
 
     return 0;
 }
+
