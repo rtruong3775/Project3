@@ -1,0 +1,3 @@
+C:/Users/killa/CLionProjects/Project3Test/cmake-build-debug/CMakeFiles/ProgrammingQuiz4.dir
+C:/Users/killa/CLionProjects/Project3Test/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/killa/CLionProjects/Project3Test/cmake-build-debug/CMakeFiles/rebuild_cache.dir
