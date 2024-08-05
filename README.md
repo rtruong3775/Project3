@@ -20,13 +20,11 @@ Menu
 1. Search for a game and display its information
 2. Search by genre
 3. Search by platfrom
-4. Display the top 10 games in ranking
-5. Visualize the data of the top 10 games
-6. Exit
+4. Display the top 10 games in specific platform
+5. Exit
 
-- Option 1, the information provided will be Title, Platform Type, Rating and Genres.
+- Option 1, the information provided will be Title, Platform Type, Rating and Genres
 - Option 2, provides all the games from that genre
 - Option 3, provides all the games from that platfrom
-- Option 4, provides a list of all 10 games with the highest ratings
-- Option 5, visualize the data of the top 10 games
-- Option 6, exits the program
+- Option 4, provides a list of all 10 games with the highest ratings in specified platform and then it is visualized
+- Option 5, exits the program
