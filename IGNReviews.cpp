@@ -10,6 +10,42 @@
 using namespace std;
 using namespace bridges;
 
+
+// class MapfromScratch {
+// private:
+//     vector<pair<string, vector<string>>> map_data;
+// public:
+//     void insert(const string& key, const vector<string>& value) {
+//         for (auto& pair : map_data) {
+//             if (pair.first == key) {
+//                 pair.second = value;
+//                 return;
+//             }
+//         }
+//         map_data.push_back({key, value});
+//     }
+
+//     vector<string> get(const string& key) {
+//         for (const auto& pair : map_data) {
+//             if (pair.first == key) {
+//                 return pair.second;
+//             }
+//         }
+//         return {};
+//     }
+
+//     bool contains(const string& key) {
+//         for (const auto& pair : map_data) {
+//             if (pair.first == key) {
+//                 return true;
+//             }
+//         }
+//         return false;
+//     }
+// };
+
+
+
 // BST function to insert game titles and ratings
 BSTElement<string, string>* insertIntoBST(string title, string rating, BSTElement<string, string> *root) {
     if (root == nullptr) {
@@ -25,6 +61,7 @@ BSTElement<string, string>* insertIntoBST(string title, string rating, BSTElemen
     return root;
 }
 
+//void searchGamesByGenre(MapfromScratch& genre_map) {
 void searchGamesByGenre(const unordered_map<string, vector<string>>& genre_map) {
     string genre;
     cout << "Enter the genre to search for: ";
@@ -43,7 +80,7 @@ void searchGamesByGenre(const unordered_map<string, vector<string>>& genre_map) 
 }
 
 
-
+// void searchGamesByPlatform(MapfromScratch& platform_map) {
 void searchGamesByPlatform(const unordered_map<string, vector<string>>& platform_map) {
     string platform;
     cout << "Enter the platform to search for: ";
@@ -167,6 +204,9 @@ int main(int argc, char **argv) {
     vector<Game> game_list = ds.getGameData();
 
     // Create unordered maps for quick lookups
+
+    // MapfromScratch genre_map;
+    // MapfromScratch platform_map;
     unordered_map<string, vector<string>> genre_map;
     unordered_map<string, vector<string>> platform_map;
 
