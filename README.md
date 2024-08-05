@@ -1,5 +1,5 @@
 <H1> COP3530 - Project 3 - Group #43 </h1>
-IGN (Imagine Games Network) is one of the most widely read news and game review sites in the industry, with many people relying on their reviews to chose a game. However, the quality of these critiques varies significantly from year to year and reviewer to reviewer. So the problem we are trying to solve is how can we identify the top-reviewed games in their catalog? Our intent is to examine the review data from IGN and develop a system that lets users search and filter reviews according to different criteria, ultimately identifying the top-rated games.
+IGN (Imagine Games Network) is one of the most widely read news and game review sites in the industry, with many people relying on their reviews to choose video games to play. However, the quality of these critiques varies significantly from year to year and reviewer to reviewer. So the problem we are trying to solve is how can we identify the top-reviewed games in their catalog? Our intent is to examine the review data from IGN and develop a system that lets users search and filter reviews according to different criteria, ultimately identifying the top-rated games.
 
 <h2> Code Features </h2>
 
