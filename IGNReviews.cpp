@@ -1,11 +1,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <queue>
+#include <algorithm>
 #include "Bridges.h"
 #include "DataSource.h"
 #include "data_src/Game.h"
-#include "BSTElement.h"
 
 using namespace std;
 using namespace bridges;
@@ -49,59 +48,56 @@ public:
         return false;
     }
 
-    // New method to get all map data
     const vector<Pair<K, vector<V>>>& getAll() const {
         return map_data;
     }
 };
 
-template<typename T>
 class MaxHeap {
 private:
-    vector<T> heap;
+    vector<pair<string, double>> heap;
 
-    void heapifyUp(size_t index) {
-        while (index > 0) {
-            size_t parentIndex = (index - 1) / 2;
-            if (heap[index].second > heap[parentIndex].second) {
-                std::swap(heap[index], heap[parentIndex]);
-                index = parentIndex;
-            } else {
-                break;
-            }
+    int getParent(int index) { return (index - 1) / 2; }
+    int getLeftChild(int index) { return 2 * index + 1; }
+    int getRightChild(int index) { return 2 * index + 2; }
+
+    void heapifyUp(int index) {
+        if (index && heap[getParent(index)].second < heap[index].second) {
+            swap(heap[index], heap[getParent(index)]);
+            heapifyUp(getParent(index));
         }
     }
 
-    void heapifyDown(size_t index) {
-        size_t size = heap.size();
-        size_t largest = index;
-        size_t left = 2 * index + 1;
-        size_t right = 2 * index + 2;
+    void heapifyDown(int index) {
+        int left = getLeftChild(index);
+        int right = getRightChild(index);
+        int largest = index;
 
-        if (left < size && heap[left].second > heap[largest].second) {
+        if (left < heap.size() && heap[left].second > heap[largest].second) {
             largest = left;
         }
-        if (right < size && heap[right].second > heap[largest].second) {
+
+        if (right < heap.size() && heap[right].second > heap[largest].second) {
             largest = right;
         }
 
         if (largest != index) {
-            std::swap(heap[index], heap[largest]);
+            swap(heap[index], heap[largest]);
             heapifyDown(largest);
         }
     }
 
 public:
-    void insert(const T& value) {
+    void insert(const pair<string, double>& value) {
         heap.push_back(value);
         heapifyUp(heap.size() - 1);
     }
 
-    T extractMax() {
+    pair<string, double> extractMax() {
         if (heap.empty()) {
-            throw std::out_of_range("Heap is empty");
+            throw out_of_range("Heap is empty");
         }
-        T maxValue = heap[0];
+        pair<string, double> maxValue = heap[0];
         heap[0] = heap.back();
         heap.pop_back();
         heapifyDown(0);
@@ -112,73 +108,6 @@ public:
         return heap.empty();
     }
 };
-
-
-BSTElement<string, string>* insertIntoBST(string title, string rating, BSTElement<string, string>* root) {
-    if (root == nullptr) {
-        root = new BSTElement<string, string>(title);
-        root->setLabel(rating);
-        return root;
-    }
-    if (title > root->getKey()) {
-        root->setRight(insertIntoBST(title, rating, root->getRight()));
-    } else {
-        root->setLeft(insertIntoBST(title, rating, root->getLeft()));
-    }
-    return root;
-}
-
-
-void visualizeTopGames(Bridges& bridges, const vector<Pair<string, double>>& top_games) {
-    BSTElement<string, string>* root = nullptr;
-
-    // Build the BST with the top 10 games
-    for (const auto& game : top_games) {
-        string title = game.first;
-        string rating = to_string(game.second);
-        root = insertIntoBST(title, rating, root);
-    }
-
-    // Set up the Bridges visualization
-    bridges.setDataStructure(root);
-
-    // Breadth-First Search (BFS) to set colors and labels
-    if (root != nullptr) {
-        queue<BSTElement<string, string>*> q;
-        q.push(root);
-        int level = 0;
-
-        while (!q.empty()) {
-            int size = q.size();
-            for (int i = 0; i < size; i++) {
-                BSTElement<string, string>* node = q.front();
-                q.pop();
-
-                // Set color based on level
-                if (level % 2 == 0) {
-                    node->setColor("yellow");
-                } else {
-                    node->setColor("purple");
-                }
-
-                // Set label (weight) for visualization
-                node->setLabel("Rating: " + node->getLabel());
-
-                // Enqueue children
-                if (node->getLeft() != nullptr) {
-                    q.push(node->getLeft());
-                }
-                if (node->getRight() != nullptr) {
-                    q.push(node->getRight());
-                }
-            }
-            level++;
-        }
-    }
-
-    // Visualize the data structure
-    bridges.visualize();
-}
 
 void searchGamesByGenre(const MapfromScratch<string, string>& genre_map) {
     string genre;
@@ -248,11 +177,15 @@ void listAvailablePlatforms(const MapfromScratch<string, string>& platform_map) 
     }
 }
 
+void displayTopGames(const vector<Game>& game_list, const string& platform, const MapfromScratch<string, string>& platform_map) {
+    if (!platform_map.contains(platform)) {
+        cout << "There is no platform named '" << platform << "'" << endl;
+        return;
+    }
 
-void displayAndVisualizeTopGames(const vector<Game>& game_list, const string& platform, Bridges& bridges) {
     MapfromScratch<string, double> title_to_rating;
 
-    // Step 1: Build the map of game titles to their highest ratings on the specified platform
+    // Build the map of game titles to their highest ratings on the specified platform
     for (const auto& game : game_list) {
         if (game.getPlatformType() == platform) {
             const string& title = game.getTitle();
@@ -270,17 +203,17 @@ void displayAndVisualizeTopGames(const vector<Game>& game_list, const string& pl
         }
     }
 
-    MaxHeap<Pair<string, double>> max_heap;
+    MaxHeap max_heap;
 
-    // Step 2: Insert all ratings for each title into the max-heap
+    // Insert all ratings for each title into the max-heap
     for (const auto& entry : title_to_rating.getAll()) {
         for (const auto& rating : entry.second) {
             max_heap.insert({entry.first, rating});
         }
     }
 
-    // Step 3: Extract top 10 games in order from the heap
-    vector<Pair<string, double>> top_games;
+    // Extract top 10 games in order from the heap
+    vector<pair<string, double>> top_games;
     int count = 0;
     while (!max_heap.empty() && count < 10) {
         const auto& top_game = max_heap.extractMax();
@@ -288,52 +221,12 @@ void displayAndVisualizeTopGames(const vector<Game>& game_list, const string& pl
         ++count;
     }
 
-    // Step 4: Display the top 10 games
+    // Display the top 10 games
     cout << "Top 10 Rated Games for platform '" << platform << "':" << endl;
     for (size_t i = 0; i < top_games.size(); ++i) {
         cout << i + 1 << ". " << top_games[i].first << " - Rating: " << top_games[i].second << endl;
     }
-
-    // Step 5: Create and visualize a BST for top games
-    BSTElement<string, string>* root = nullptr;
-    for (const auto& game : top_games) {
-        string title = game.first;
-        string rating = to_string(game.second);
-        root = insertIntoBST(title, rating, root);
-    }
-
-    bridges.setDataStructure(root);
-
-    queue<BSTElement<string, string>*> q;
-    q.push(root);
-    int level = 0;
-
-    while (!q.empty()) {
-        int size = q.size();
-        for (int i = 0; i < size; i++) {
-            BSTElement<string, string>* node = q.front();
-            q.pop();
-
-            if (node->getLeft() != nullptr) {
-                q.push(node->getLeft());
-            }
-            if (node->getRight() != nullptr) {
-                q.push(node->getRight());
-            }
-
-            if (level % 2 == 0) {
-                node->setColor("yellow");
-            } else {
-                node->setColor("purple");
-            }
-        }
-        level++;
-    }
-
-    bridges.visualize();
 }
-
-
 
 int main(int argc, char **argv) {
     Bridges bridges(0, "largebug239", "798763852353");
@@ -359,7 +252,7 @@ int main(int argc, char **argv) {
         cout << "2. Search for games by genre" << endl;
         cout << "3. Search for games by platform" << endl;
         cout << "4. List all available platforms" << endl;
-        cout << "5. Display and visualize top 10 games by platform" << endl;
+        cout << "5. Display top 10 games by platform" << endl;
         cout << "6. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
@@ -382,7 +275,7 @@ int main(int argc, char **argv) {
                 cout << "Enter the platform to display top games for: ";
                 cin.ignore(); // to ignore any leftover newline character
                 getline(cin, platform);
-                displayAndVisualizeTopGames(game_list, platform, bridges);
+                displayTopGames(game_list, platform, platform_map);
                 break;
             }
             case 6:
