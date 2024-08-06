@@ -28,5 +28,5 @@ Menu:
 - Option 2, provides all the games from that genre
 - Option 3, provides all the games from that platfrom
 - Option 4, provides a list of all available platforms to choose from
-- Option 5, provides a list of all 10 games with the highest ratings in specified platform and then it is visualized
+- Option 5, provides a list of all 10 games with the highest ratings in specified platform
 - Option 6, exits the program
